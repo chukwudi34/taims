@@ -61,7 +61,7 @@
   </layout>
 </template>
 <script>
-import layout from "../../BaseLayouts/Layout.vue";
+import layout from "../BaseLayouts/Layout.vue";
 import axios from "axios";
 export default {
   components: { layout },

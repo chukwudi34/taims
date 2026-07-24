@@ -51,7 +51,7 @@
   </layout>
 </template>
 <script>
-import layout from "../../../BaseLayouts/Layout.vue";
+import layout from "../../BaseLayouts/Layout.vue";
 export default {
   components: { layout },
   props: { transactions: Object },
