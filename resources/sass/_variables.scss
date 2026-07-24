@@ -1,0 +1,71 @@
+// Body
+$body-bg: #f8fafc;
+
+// Typography
+$font-family-sans-serif: 'Nunito', sans-serif;
+$font-size-base: 0.9rem;
+$line-height-base: 1.6;
+
+.treeview-animated-items .closed .fa-angle-right {
+    transition: all .1s linear;
+    font-size: .8rem;
+}
+
+.closed .fa-angle-right.down {
+    position: relative;
+    color: #f8f9fa;
+    transform: rotate(90deg);
+}
+
+.treeview-animated-items .closed .mdi-chevron-right {
+    transition: all .1s linear;
+    font-size: .8rem;
+}
+
+.closed .mdi-chevron-right.down {
+    position: relative;
+    color: #f8f9fa;
+    transform: rotate(90deg);
+}
+
+.b-sidebar {
+    position: relative !important;
+}
+
+// Scroll Areas
+
+.scroll-area {
+    overflow-x: hidden;
+    height: 400px;
+  }
+
+  .scroll-area-xs {
+    height: 150px;
+    overflow-x: hidden;
+  }
+
+  .scroll-area-sm {
+    height: 200px;
+    overflow-x: hidden;
+  }
+
+  .scroll-area-md {
+    height: 300px;
+    overflow-x: hidden;
+  }
+
+  .scroll-area-lg {
+    height: 400px;
+    overflow-x: hidden;
+  }
+
+  .scroll-area-xlg {
+      height: 500px;
+      overflow-x: hidden;
+    }
+
+  .scroll-area-x {
+    overflow-x: auto;
+    width: 100%;
+    max-width: 100%;
+  }
