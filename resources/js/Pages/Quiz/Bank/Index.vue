@@ -52,9 +52,9 @@
                 </div>
                 <div class="box_body">
                   <div class="table-responsive">
+                  <div v-if="quizzes.data != ''">
                   <table
                     class="table table-bordered table-striped"
-                    v-if="quizzes.data != ''"
                   >
                     <thead>
                       <tr>

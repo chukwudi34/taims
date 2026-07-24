@@ -132,12 +132,10 @@
                   </td>
                 </tr>
               </tbody>
-                <tr v-if="!subjects.length">
-                  <td colspan="5" class="text-center">
-                    <h5>No Record Found</h5>
-                  </td>
-                </tr>
             </table>
+            </div>
+            <div class="alert alert-info text-center" v-else>
+              <h5>No Record Found</h5>
             </div>
           </div>
         </div>
