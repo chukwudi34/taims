@@ -15,7 +15,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-lg-3">
+            <div class="col-lg-3 col-md-6 col-sm-12">
               <div class="white_card card_height_100 mb_20">
                 <div class="white_card_header">
                   <div class="box_header m-0">
@@ -29,7 +29,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-lg-3">
+            <div class="col-lg-3 col-md-6 col-sm-12">
               <div class="white_card card_height_100 mb_20">
                 <div class="white_card_header">
                   <div class="box_header m-0">
@@ -46,7 +46,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-lg-3">
+            <div class="col-lg-3 col-md-6 col-sm-12">
               <div class="white_card card_height_100 mb_20">
                 <div class="white_card_header">
                   <div class="box_header m-0">
@@ -65,7 +65,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-lg-3">
+            <div class="col-lg-3 col-md-6 col-sm-12">
               <div class="white_card card_height_100 mb_20">
                 <div class="white_card_header">
                   <div class="box_header m-0">
@@ -82,7 +82,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-lg-3">
+            <div class="col-lg-3 col-md-6 col-sm-12">
               <div class="white_card card_height_100 mb_20">
                 <div class="white_card_header">
                   <div class="box_header m-0">
@@ -101,7 +101,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-lg-3">
+            <div class="col-lg-3 col-md-6 col-sm-12">
               <div class="white_card card_height_100 mb_20">
                 <div class="white_card_header">
                   <div class="box_header m-0">

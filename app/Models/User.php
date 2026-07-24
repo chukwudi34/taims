@@ -122,4 +122,45 @@ class User extends Authenticatable
     {
         return $this->hasManyThrough(Question::class, OptionQuestion::class);
     }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
+    public function hasAccessToClass($classId): bool
+    {
+        return $this->transactions()
+            ->where('item_type', 'class')
+            ->where('item_id', $classId)
+            ->where('status', 'completed')
+            ->exists();
+    }
+
+    public function hasAccessToVideo($videoId): bool
+    {
+        return $this->transactions()
+            ->where('item_type', 'video')
+            ->where('item_id', $videoId)
+            ->where('status', 'completed')
+            ->exists();
+    }
+
+    public function hasAccessToLiveClass($liveClassId): bool
+    {
+        return $this->transactions()
+            ->where('item_type', 'live_class')
+            ->where('item_id', $liveClassId)
+            ->where('status', 'completed')
+            ->exists();
+    }
+
+    public function hasAccessToQuiz($quizId): bool
+    {
+        return $this->transactions()
+            ->where('item_type', 'quiz')
+            ->where('item_id', $quizId)
+            ->where('status', 'completed')
+            ->exists();
+    }
 }

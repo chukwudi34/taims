@@ -51,6 +51,7 @@
             </div>
           </div>
           <div class="col-md-12">
+            <div class="table-responsive">
             <table
               class="table table-bordered table-striped"
               v-if="subjects.length"
@@ -132,6 +133,7 @@
                 </tr>
               </tbody>
             </table>
+            </div>
             <div class="alert alert-info text-center" v-else>
               <h5>No Record Found</h5>
             </div>

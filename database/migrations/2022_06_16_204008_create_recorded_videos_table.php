@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('recorded_videos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('subject_id')->references('id')->on('subjects');
-            $table->string('topic_id')->references('id')->on('topics');
+            $table->foreignId('topic_id')->references('id')->on('subject_topics');
             $table->string('title');
             $table->text('description');
             $table->string('video_link')->nullable();

@@ -20,13 +20,8 @@ class Question extends Model
         return $this->hasMany(Option::class);
     }
 
-    // public function options()
-    // {
-    //     return $this->hasMany(Option::class);
-    // }
-
-    // public function quiz(): BelongsTo
-    // {
-    //     return $this->belongsTo(Quiz::class);
-    // }
+    public function quiz(): BelongsTo
+    {
+        return $this->belongsTo(Quiz::class);
+    }
 }

@@ -1,4 +1,5 @@
 <?php
+// @deprecated Use AuthenticatedSessionController (Inertia) instead
 
 namespace App\Http\Controllers\Auth;
 

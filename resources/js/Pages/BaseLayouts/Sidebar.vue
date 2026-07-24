@@ -147,6 +147,79 @@
           </li>
           <li class="treeview-animated-items">
             <inertia-link
+              href="/admin/payment/pricing"
+              aria-expanded="false"
+              :class="[
+                $page.url === '/admin/payment/pricing' ? 'active' : 'side-menu-link',
+              ]"
+              v-if="$page.props.auth.user.user_type_id == 3"
+            >
+              <div class="icon_menu">
+                <span class="mdi mdi-currency-ngn"></span>
+              </div>
+              <span class="text">Payment Pricing</span>
+            </inertia-link>
+          </li>
+          <li class="treeview-animated-items">
+            <inertia-link
+              href="/admin/payment/transactions"
+              aria-expanded="false"
+              :class="[
+                $page.url === '/admin/payment/transactions' ? 'active' : 'side-menu-link',
+              ]"
+              v-if="$page.props.auth.user.user_type_id == 3"
+            >
+              <div class="icon_menu">
+                <span class="mdi mdi-file-document-box"></span>
+              </div>
+              <span class="text">Transactions</span>
+            </inertia-link>
+          </li>
+          <li class="treeview-animated-items">
+            <inertia-link
+              href="/attendance/index"
+              aria-expanded="false"
+              :class="[
+                $page.url.startsWith('/attendance') ? 'active' : 'side-menu-link',
+              ]"
+            >
+              <div class="icon_menu">
+                <span class="mdi mdi-calendar-check"></span>
+              </div>
+              <span class="text">Attendance</span>
+            </inertia-link>
+          </li>
+          <li class="treeview-animated-items">
+            <inertia-link
+              href="/profile"
+              aria-expanded="false"
+              :class="[
+                $page.url.startsWith('/profile') ? 'active' : 'side-menu-link',
+              ]"
+            >
+              <div class="icon_menu">
+                <span class="mdi mdi-account-circle"></span>
+              </div>
+              <span class="text">Profile</span>
+            </inertia-link>
+          </li>
+          <li class="treeview-animated-items">
+            <inertia-link
+              href="/purchases"
+              aria-expanded="false"
+              :class="[
+                $page.url === '/purchases' ? 'active' : 'side-menu-link',
+              ]"
+              v-if="$page.props.auth.user.user_type_id == 2"
+            >
+              <div class="icon_menu">
+                <span class="mdi mdi-cart"></span>
+              </div>
+              <span class="text">My Purchases</span>
+            </inertia-link>
+          </li>
+          <li class="treeview-animated-items">
+            <inertia-link
               href="/manage-user"
               aria-expanded="false"
               :class="[

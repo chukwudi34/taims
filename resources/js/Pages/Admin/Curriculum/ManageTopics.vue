@@ -49,6 +49,7 @@
         </div>
       </div>
       <div class="box_body">
+        <div class="table-responsive">
         <table
           class="table table-bordered table-sm table-striped"
           v-if="Object.entries(subjectData).length > 0 && topics.length"
@@ -107,6 +108,7 @@
             </tr>
           </tbody>
         </table>
+        </div>
         <div class="alert alert-info text-center" v-if="subjectData == ''">
           <h5>Select a subject to manage the topics attached to it</h5>
         </div>

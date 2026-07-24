@@ -36,7 +36,14 @@ Route::middleware(['auth'])->group(function () {
     });
     Route::get('/subject/manager', [CurriculumController::class, 'index'])->name('subject_index');
 
-    Route::prefix('admin')->name('admin.')->group(function () {
+    Route::prefix('admin')->name('admin.')->middleware('role:3')->group(function () {
+
+        Route::prefix('payment')->name('payment.')->group(function () {
+            Route::get('/pricing', [\App\Http\Controllers\AdminPaymentController::class, 'pricingIndex'])->name('pricing');
+            Route::post('/pricing/set', [\App\Http\Controllers\AdminPaymentController::class, 'setPricing'])->name('pricing.set');
+            Route::post('/pricing/remove', [\App\Http\Controllers\AdminPaymentController::class, 'removePricing'])->name('pricing.remove');
+            Route::get('/transactions', [\App\Http\Controllers\AdminPaymentController::class, 'transactionLog'])->name('transactions');
+        });
 
         /*
         |--------------------------------------------------------------
@@ -138,7 +145,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/set_quiz_live', [QuizController::class, 'setQuizLive'])->name('set_quiz_live');
         Route::get('/take_quiz_index', [QuizController::class, 'takeQuizIndex'])->name('take_quiz_index');
         Route::post('/fetch_live_quiz', [QuizController::class, 'fetchLiveQuizForStudent'])->name('fetch_live_quiz');
-        Route::get('/start_quiz/{quiz_id}', [QuizController::class, 'startQuiz'])->name('start_quiz');
+        Route::get('/start_quiz/{quiz_id}', [QuizController::class, 'startQuiz'])->name('start_quiz')->middleware('access:quiz');
         Route::post('/fetch_to_start', [QuizController::class, 'fetchToStart'])->name('fetch_to_start');
         Route::post('/submit_quiz_student', [QuizController::class, 'submitQuiz'])->name('submit_quiz_student');
         Route::get('/get_quiz_result_student/{quiz_id}', [QuizController::class, 'getAnswer'])->name('get_quiz_result_student');
@@ -146,8 +153,25 @@ Route::middleware(['auth'])->group(function () {
     });
     Route::prefix('attendance')->name('attendance.')->group(function () {
         Route::get('/index', [AttendanceController::class, 'index'])->name('index');
+        Route::get('/live-class/{liveClassId}', [AttendanceController::class, 'showLiveClass'])->name('live-class');
+        Route::post('/store', [AttendanceController::class, 'store'])->name('store');
+        Route::get('/history', [AttendanceController::class, 'studentHistory'])->name('history');
+        Route::get('/report', [AttendanceController::class, 'adminReport'])->name('report');
     });
     // ---- User Manager ---
+    Route::prefix('payment')->name('payment.')->group(function () {
+        Route::post('/checkout', [\App\Http\Controllers\PaymentController::class, 'checkout'])->name('checkout');
+    });
+
+    Route::get('/purchases', [\App\Http\Controllers\PurchaseController::class, 'index'])->name('purchases');
+
+    Route::prefix('profile')->name('profile.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\ProfileController::class, 'show'])->name('index');
+        Route::post('/update', [\App\Http\Controllers\ProfileController::class, 'update'])->name('update');
+        Route::post('/change-password', [\App\Http\Controllers\ProfileController::class, 'changePassword'])->name('change-password');
+        Route::post('/upload-avatar', [\App\Http\Controllers\ProfileController::class, 'uploadAvatar'])->name('upload-avatar');
+    });
+
     Route::prefix('manage-user')->name('manage-user.')->group(function () {
         Route::get('/', [UserManager::class, 'index'])->name('index');
         Route::post('/all', [UserManager::class, 'All'])->name('all');
@@ -158,5 +182,8 @@ Route::middleware(['auth'])->group(function () {
         // Route::post('/change_role_admin', [UserManager::class, 'RemoveFromAdmin']);
     });
 });
+
+Route::get('/payment/callback', [\App\Http\Controllers\PaymentController::class, 'callback'])->name('payment.callback');
+Route::post('/payment/webhook', [\App\Http\Controllers\PaymentController::class, 'webhook'])->name('payment.webhook')->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class);
 
 require __DIR__ . '/auth.php';

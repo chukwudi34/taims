@@ -51,6 +51,7 @@
                   </div>
                 </div>
                 <div class="box_body">
+                  <div class="table-responsive">
                   <table
                     class="table table-bordered table-striped"
                     v-if="quizzes.data != ''"
@@ -127,6 +128,7 @@
                       </tr>
                     </tbody>
                   </table>
+                  </div>
                   <div class="alert alert-info text-center" v-else>
                     <h5>No Record Found</h5>
                   </div>
