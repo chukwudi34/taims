@@ -124,7 +124,7 @@ export default {
     getAllSubjects() {
       this.classCreateLoading = true;
       axios
-        .post(this.$route("admin.curriculum.subjects"), {
+        .post(this.$route("client.curriculum.subjects"), {
           class_id: this.form.class,
         })
         .then((res) => {
@@ -140,7 +140,7 @@ export default {
     getSubjectTopics() {
       this.topicLoading = true;
       axios
-        .get(this.$route("admin.curriculum.subjects.topics", this.form.subject))
+        .get(this.$route("client.curriculum.subjects.topics", this.form.subject))
         .then((res) => {
           this.topics = res.data;
         })

@@ -52,9 +52,9 @@
           </div>
           <div class="col-md-12">
             <div class="table-responsive">
-            <div v-if="subjects.length">
             <table
               class="table table-bordered table-striped"
+              v-if="subjects.length"
             >
               <thead>
                 <tr>
@@ -133,7 +133,6 @@
                 </tr>
               </tbody>
             </table>
-            </div>
             <div class="alert alert-info text-center" v-else>
               <h5>No Record Found</h5>
             </div>
@@ -157,6 +156,7 @@
         @subject-updated="getAllSubjects"
       />
     </b-modal>
+  </div>
   </div>
 </template>
 

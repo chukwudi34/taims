@@ -158,7 +158,7 @@ export default {
     getAllSubjects() {
       this.classCreateLoading = true;
       axios
-        .post(this.$route("admin.curriculum.subjects"), {
+        .post(this.$route("client.curriculum.subjects"), {
           class_id: this.form.class,
         })
         .then((res) => {

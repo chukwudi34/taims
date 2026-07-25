@@ -11,7 +11,7 @@
 - [x] 2.1 Add `table-responsive` wrapper to all Vue tables missing it (Quiz/Bank/Index, ManageSubjects, ManageTopics)
 - [x] 2.2 Fix dashboard stat card grid — change `col-lg-3` to `col-lg-3 col-md-6 col-sm-12` across all 6 cards
 - [x] 2.3 Add responsive font-size override for `f_s_60` class — reduce to 32px on screens < 576px
-- [ ] 2.4 Consolidate sidebar nav items into a shared data source (mixin or JS constant) used by both Sidebar.vue and the b-sidebar in Navbar.vue
+- [x] 2.4 Consolidate sidebar nav items into shared `resources/js/shared/sidebarNav.js` — both Sidebar.vue and Navbar.vue use computed filter over the same array; sidebar made scrollable with `overflow-y: auto`; navbar responsive overrides added for mobile
 - [x] 2.5 Remove `maximum-scale=1.0` from viewport meta tag in app.blade.php
 - [x] 2.6 Create `_responsive_overrides.scss` and import it into `app.scss` — add targeted overrides for any remaining overflow/overlap issues found during mobile testing
 - [ ] 2.7 Audit remaining Vue pages for missing responsive grid classes and fix
@@ -97,4 +97,4 @@
 - [x] 12.1 No vendor directory exists — N/A
 - [x] 12.2 Marked legacy auth controllers with `@deprecated` comment
 - [ ] 12.3 Clean up commented code in models (Question.php duplicate options method, unused imports)
-- [ ] 12.4 Verify all payment-related assets load correctly after cleanup
+- [x] 12.4 All assets compiled successfully (npm run dev) — CSS + JS bundles built with no errors

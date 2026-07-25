@@ -181,7 +181,7 @@ export default {
     getAllSubjects() {
       this.classVideoLoading = true;
       axios
-        .post(this.$route("admin.curriculum.subjects"))
+        .post(this.$route("client.curriculum.subjects"))
         .then((res) => {
           this.subjects = res.data.filter((e) => {
             return e.status == "approved";
@@ -198,7 +198,7 @@ export default {
     getSubjectTopics() {
       this.topicLoading = true;
       axios
-        .get(this.$route("admin.curriculum.subjects.topics", this.form.subject))
+        .get(this.$route("client.curriculum.subjects.topics", this.form.subject))
         .then((res) => {
           this.topics = res.data;
         })

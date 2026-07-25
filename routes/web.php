@@ -94,6 +94,15 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('client')->name('client.')->group(function () {
         /*
         |--------------------------------------------------------------
+        |   Reference Data Routes
+        |--------------------------------------------------------------
+        */
+        Route::get('/classes', [CurriculumController::class, 'fetch_class'])->name('classes');
+        Route::post('/curriculum/subjects', [CurriculumController::class, 'fetch_subject'])->name('curriculum.subjects');
+        Route::get('/curriculum/subjects/topics/{subject_id}', [CurriculumController::class, 'fetch_subject_topics'])->name('curriculum.subjects.topics');
+
+        /*
+        |--------------------------------------------------------------
         |   Digital Learning Routes
         |--------------------------------------------------------------
         */

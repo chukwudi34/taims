@@ -255,7 +255,7 @@ export default {
     getAllSubjects() {
       this.liveClassLoading = true;
       axios
-        .post(this.$route("admin.curriculum.subjects"))
+        .post(this.$route("client.curriculum.subjects"))
         .then((res) => {
           this.subjects = res.data;
         })

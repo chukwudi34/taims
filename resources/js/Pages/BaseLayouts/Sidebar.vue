@@ -14,223 +14,20 @@
       </div>
       <div class="treeview-animated">
         <ul id="sidebar_menu" class="treeview-animated-list">
-          <li class="treeview-animated-items">
+          <li
+            class="treeview-animated-items"
+            v-for="item in visibleNavItems"
+            :key="item.href"
+          >
             <inertia-link
-              href="/dashboard"
+              :href="item.href"
               aria-expanded="false"
-              :class="[
-                $page.url === '/dashboard' ? 'active' : 'side-menu-link',
-              ]"
+              :class="[item.activeMatch($page.url) ? 'active' : 'side-menu-link']"
             >
               <div class="icon_menu">
-                <span class="mdi mdi-view-dashboard"></span>
+                <span :class="'mdi ' + item.icon"></span>
               </div>
-              <span class="text">Dashboard</span>
-            </inertia-link>
-          </li>
-          <li class="treeview-animated-items">
-            <inertia-link
-              href="/admin/class"
-              aria-expanded="false"
-              :class="[
-                $page.url === '/admin/class' ? 'active' : 'side-menu-link',
-              ]"
-              v-if="
-                $page.props.auth.user.user_type_id == 3 ||
-                $page.props.auth.user.user_type_id == 1
-              "
-            >
-              <div class="icon_menu">
-                <span class="mdi mdi-school"></span>
-              </div>
-              <span class="text">Class Manager</span>
-            </inertia-link>
-          </li>
-          <li class="treeview-animated-items">
-            <inertia-link
-              href="/subject/manager"
-              aria-expanded="false"
-              :class="[
-                $page.url === '/subject/manager' ? 'active' : 'side-menu-link',
-              ]"
-            >
-              <div class="icon_menu">
-                <span class="mdi mdi-book-open-page-variant"></span>
-              </div>
-              <span class="text">Curriculum</span>
-            </inertia-link>
-          </li>
-          <li class="treeview-animated-items">
-            <inertia-link
-              href="/client/digital_class/live_class"
-              aria-expanded="false"
-              :class="[
-                $page.url === '/client/digital_class/live_class'
-                  ? 'active'
-                  : 'side-menu-link',
-              ]"
-            >
-              <div class="icon_menu">
-                <span class="mdi mdi-cast"></span>
-              </div>
-              <span class="text">Live Class</span>
-            </inertia-link>
-          </li>
-          <li class="treeview-animated-items">
-            <inertia-link
-              href="/client/digital_class/recorded_videos"
-              aria-expanded="false"
-              :class="[
-                $page.url === '/client/digital_class/recorded_videos'
-                  ? 'active'
-                  : 'side-menu-link',
-              ]"
-            >
-              <div class="icon_menu">
-                <span class="mdi mdi-video-vintage"></span>
-              </div>
-              <span class="text">Recorded Video</span>
-            </inertia-link>
-          </li>
-
-          <li class="treeview-animated-items">
-            <inertia-link
-              href="/assessment"
-              aria-expanded="false"
-              :class="[
-                $page.url === '/assessment' ? 'active' : 'side-menu-link',
-              ]"
-              v-if="$page.props.auth.user.user_type_id == 3"
-            >
-              <div class="icon_menu">
-                <span class="mdi mdi-pencil"></span>
-              </div>
-              <span class="text">Assessment Setup</span>
-            </inertia-link>
-          </li>
-          <li class="treeview-animated-items">
-            <inertia-link
-              href="/assessment/quiz_bank"
-              aria-expanded="false"
-              :class="[
-                $page.url === '/assessment/quiz_bank'
-                  ? 'active'
-                  : 'side-menu-link',
-              ]"
-              v-if="
-                $page.props.auth.user.user_type_id == 3 ||
-                $page.props.auth.user.user_type_id == 1
-              "
-            >
-              <div class="icon_menu">
-                <span class="mdi mdi-bank"></span>
-              </div>
-              <span class="text">Assessment Bank</span>
-            </inertia-link>
-          </li>
-          <li class="treeview-animated-items">
-            <inertia-link
-              href="/assessment/take_quiz_index"
-              aria-expanded="false"
-              :class="[
-                $page.url === '/assessment/take_quiz_index'
-                  ? 'active'
-                  : 'side-menu-link',
-              ]"
-              v-if="$page.props.auth.user.user_type_id == 2"
-            >
-              <div class="icon_menu">
-                <span class="mdi mdi-comment-question"></span>
-              </div>
-              <span class="text">Assessment Quiz</span>
-            </inertia-link>
-          </li>
-          <li class="treeview-animated-items">
-            <inertia-link
-              href="/admin/payment/pricing"
-              aria-expanded="false"
-              :class="[
-                $page.url === '/admin/payment/pricing' ? 'active' : 'side-menu-link',
-              ]"
-              v-if="$page.props.auth.user.user_type_id == 3"
-            >
-              <div class="icon_menu">
-                <span class="mdi mdi-currency-ngn"></span>
-              </div>
-              <span class="text">Payment Pricing</span>
-            </inertia-link>
-          </li>
-          <li class="treeview-animated-items">
-            <inertia-link
-              href="/admin/payment/transactions"
-              aria-expanded="false"
-              :class="[
-                $page.url === '/admin/payment/transactions' ? 'active' : 'side-menu-link',
-              ]"
-              v-if="$page.props.auth.user.user_type_id == 3"
-            >
-              <div class="icon_menu">
-                <span class="mdi mdi-file-document-box"></span>
-              </div>
-              <span class="text">Transactions</span>
-            </inertia-link>
-          </li>
-          <li class="treeview-animated-items">
-            <inertia-link
-              href="/attendance/index"
-              aria-expanded="false"
-              :class="[
-                $page.url.startsWith('/attendance') ? 'active' : 'side-menu-link',
-              ]"
-            >
-              <div class="icon_menu">
-                <span class="mdi mdi-calendar-check"></span>
-              </div>
-              <span class="text">Attendance</span>
-            </inertia-link>
-          </li>
-          <li class="treeview-animated-items">
-            <inertia-link
-              href="/profile"
-              aria-expanded="false"
-              :class="[
-                $page.url.startsWith('/profile') ? 'active' : 'side-menu-link',
-              ]"
-            >
-              <div class="icon_menu">
-                <span class="mdi mdi-account-circle"></span>
-              </div>
-              <span class="text">Profile</span>
-            </inertia-link>
-          </li>
-          <li class="treeview-animated-items">
-            <inertia-link
-              href="/purchases"
-              aria-expanded="false"
-              :class="[
-                $page.url === '/purchases' ? 'active' : 'side-menu-link',
-              ]"
-              v-if="$page.props.auth.user.user_type_id == 2"
-            >
-              <div class="icon_menu">
-                <span class="mdi mdi-cart"></span>
-              </div>
-              <span class="text">My Purchases</span>
-            </inertia-link>
-          </li>
-          <li class="treeview-animated-items">
-            <inertia-link
-              href="/manage-user"
-              aria-expanded="false"
-              :class="[
-                $page.url === '/manage-user' ? 'active' : 'side-menu-link',
-              ]"
-              v-if="$page.props.auth.user.user_type_id == 3"
-            >
-              <div class="icon_menu">
-                <span class="mdi mdi-account-group"></span>
-              </div>
-              <span class="text">Manage Users</span>
+              <span class="text">{{ item.label }}</span>
             </inertia-link>
           </li>
         </ul>
@@ -239,16 +36,14 @@
   </div>
 </template>
 <script>
+import { navItems } from "../../shared/sidebarNav";
 export default {
-  data() {
-    return {
-      isDropdownOpen: false,
-    };
-  },
-
-  methods: {
-    toggleDropdown() {
-      this.isDropdownOpen = !this.isDropdownOpen;
+  computed: {
+    visibleNavItems() {
+      const userTypeId = this.$page.props.auth?.user?.user_type_id;
+      return navItems.filter(
+        (item) => !item.roles || item.roles.includes(userTypeId)
+      );
     },
   },
   mounted() {
@@ -315,9 +110,6 @@ export default {
   color: #002147 !important;
 }
 
-/* .closed .mdi:before {
-  font-size: 22px !important;
-} */
 .closed .mdi-chevron-right::before {
   color: #a1a4b9 !important;
 }
@@ -325,18 +117,11 @@ export default {
 .sidebar #sidebar_menu > li a {
   font-size: 15px !important;
 }
-/* .sidebar #sidebar_menu > li {
-  margin-right: 0px !important;
-} */
 
 .sidebar #sidebar_menu > li ul li a {
   font-size: 13px !important;
 }
 .sidebar #sidebar_menu > li a {
   font-size: 15px !important;
-}
-.icon_menu {
-  /* color: #4448e7 !important; */
-  /* font-size: 23px !important; */
 }
 </style>

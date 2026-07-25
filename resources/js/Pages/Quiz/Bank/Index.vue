@@ -1,11 +1,10 @@
 <template>
-  <div>
-    <layout>
-      <div class="main_content_iner">
-        <div class="container-fluid p-0 sm_padding_15px">
-          <div class="row justify-content-center">
-            <div class="col-12">
-              <div class="dashboard_header mb_20">
+  <layout>
+    <div class="main_content_iner">
+      <div class="container-fluid p-0 sm_padding_15px">
+        <div class="row justify-content-center">
+          <div class="col-12">
+            <div class="dashboard_header mb_20">
                 <div class="row">
                   <div class="col-lg-6">
                     <div class="dashboard_header_title">
@@ -52,9 +51,9 @@
                 </div>
                 <div class="box_body">
                   <div class="table-responsive">
-                  <div v-if="quizzes.data != ''">
                   <table
                     class="table table-bordered table-striped"
+                    v-if="quizzes.data != ''"
                   >
                     <thead>
                       <tr>
@@ -128,7 +127,6 @@
                       </tr>
                     </tbody>
                   </table>
-                  </div>
                   <div class="alert alert-info text-center" v-else>
                     <h5>No Record Found</h5>
                   </div>
@@ -142,8 +140,8 @@
           <CreateQuiz :my_modal="this.$bvModal" @quiz-created="fetchQuiz" />
         </b-modal>
       </div>
-    </layout>
-  </div>
+    </div>
+  </layout>
 </template>
 <script>
 import layout from "../../BaseLayouts/Layout.vue";

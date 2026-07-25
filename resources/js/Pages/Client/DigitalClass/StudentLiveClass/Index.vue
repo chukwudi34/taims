@@ -196,7 +196,7 @@
       getAllSubjects() {
         this.liveClassLoading = true;
         axios
-          .get(this.$route("admin.curriculum.subjects"))
+          .get(this.$route("client.curriculum.subjects"))
           .then((res) => {
             this.subjects = res.data;
           })

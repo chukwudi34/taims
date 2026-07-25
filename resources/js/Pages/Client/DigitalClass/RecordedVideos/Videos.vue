@@ -233,7 +233,7 @@ export default {
     getAllSubjects() {
       this.recordedVideosLoading = true;
       axios
-        .post(this.$route("admin.curriculum.subjects"), {
+        .post(this.$route("client.curriculum.subjects"), {
           class_id: this.$page.props.auth.user.class_id ?? "",
         })
         .then((res) => {

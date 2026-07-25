@@ -3,3 +3,48 @@
     font-size: 32px !important;
   }
 }
+
+/* Sidebar scrollable — force override of template CSS */
+.sidebar {
+  position: fixed !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  height: 100vh !important;
+}
+.sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+.sidebar::-webkit-scrollbar-thumb {
+  background: #c1c7cd;
+  border-radius: 4px;
+}
+
+/* b-sidebar mobile nav */
+.b-sidebar .sidebar {
+  height: 100% !important;
+  overflow-y: auto !important;
+}
+
+/* Navbar mobile adjustments */
+@media (max-width: 991.98px) {
+  .header_iner h4 {
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+  }
+  .header_right .profile_info img {
+    width: 32px;
+    height: 32px;
+  }
+}
+@media (max-width: 575.98px) {
+  .header_iner h4 {
+    font-size: 11px;
+    max-width: 120px;
+  }
+  .sidebar_icon {
+    margin-right: 8px;
+  }
+}
