@@ -780,6 +780,9 @@
     <!-- Flutterwave Inline JS -->
     <script src="https://checkout.flutterwave.com/v3.js"></script>
 
+    <!-- Paystack Inline JS -->
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+
     <!-- Latest compiled JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 

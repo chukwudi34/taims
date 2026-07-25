@@ -120,6 +120,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('/edit', [DigitalClassController::class, 'editLiveClassSchedule'])->name('edit');
                 Route::post('/update_meeting_link', [DigitalClassController::class, 'updateMeetingLink'])->name('update_meeting_link');
                 Route::post('/update_elapsed', [DigitalClassController::class, 'updateElapsed'])->name('update_elapsed');
+                Route::get('/join/{id}', [DigitalClassController::class, 'joinLiveClass'])->name('join')->middleware('access:live_class');
             });
 
             /*
@@ -133,6 +134,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('/create', [DigitalClassController::class, 'uploadRecordedVideos'])->name('create');
                 Route::post('/edit', [DigitalClassController::class, 'editRecordedVideos'])->name('edit');
                 Route::post('/change_status', [DigitalClassController::class, 'changeVideoStatus'])->name('change_status');
+                Route::get('/watch/{id}', [DigitalClassController::class, 'watchRecordedVideo'])->name('watch')->middleware('access:video');
                 Route::post('/delete', [DigitalClassController::class, 'deleteVideo'])->name('delete');
             });
         });

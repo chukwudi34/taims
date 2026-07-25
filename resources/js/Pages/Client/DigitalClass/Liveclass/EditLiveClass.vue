@@ -82,6 +82,22 @@
                 </div>
                 <p class="text-danger" v-if="errorMsg.class_time">{{errorMsg.class_time[0]}}</p>
             </div>
+            <div class="mb-4">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">Price (NGN)</span>
+                  </div>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    v-model="form.price"
+                    class="form-control"
+                    placeholder="0 = Free"
+                  />
+                </div>
+                <p class="text-muted small mt-1">Set 0 for free access</p>
+            </div>
           </div>
         </div>
       </div>
@@ -119,6 +135,7 @@ export default {
         topic: this.currentClass.topic_id,
         class_date: this.currentClass.date,
         class_time: this.currentClass.time,
+        price: this.currentClass.price || '',
         liveClassId: this.currentClass.id
       },
     };

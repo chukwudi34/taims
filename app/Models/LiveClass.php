@@ -11,8 +11,10 @@ class LiveClass extends Model
     use HasFactory;
 
     protected $guarded = [];
-    protected $casted = [
-        "participants" => "array",
+
+    protected $casts = [
+        'participants' => 'array',
+        'price' => 'float',
     ];
     protected $with = ['subject', 'topic', 'creator'];
 

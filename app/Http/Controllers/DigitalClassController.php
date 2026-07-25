@@ -14,6 +14,7 @@ use App\Mail\NotifyStudent;
 use App\Mail\NotifyAdmin;
 use Illuminate\Http\Request;
 use App\Models\RecordedVideo;
+use App\Models\Transaction;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -74,6 +75,7 @@ class DigitalClassController extends Controller
                 'end_time' => 'required',
                 'start_time' => 'required',
                 'class' => 'required',
+                'price' => 'nullable|numeric|min:0',
             ]);
 
             $user = Auth::user();
@@ -107,6 +109,7 @@ class DigitalClassController extends Controller
                 'end_time' => $request->end_time,
                 'time_duration' => $total_time_minute_duration,
                 'meeting_url' => $url,
+                'price' => $request->price ?? 0,
             ], [
                 'status' => 'not_started',
             ]);
@@ -172,7 +175,24 @@ class DigitalClassController extends Controller
                 $liveclass->where('subject_id', $request->subjectId);
             }
 
-            return $liveclass->orderBy('created_at', 'DESC')->paginate(30);
+            $result = $liveclass->orderBy('created_at', 'DESC')->paginate(30);
+
+            $purchasedIds = Transaction::where('user_id', Auth::id())
+                ->where('item_type', 'live_class')
+                ->where('status', 'completed')
+                ->pluck('item_id')
+                ->toArray();
+
+            $result->getCollection()->transform(function ($item) use ($purchasedIds) {
+                $hasAccess = ($item->price <= 0) || in_array($item->id, $purchasedIds);
+                $item->has_access = $hasAccess;
+                if (!$hasAccess) {
+                    $item->meeting_url = null;
+                }
+                return $item;
+            });
+
+            return $result;
         } catch (\Throwable $th) {
             return $th->getMessage();
         }
@@ -189,14 +209,21 @@ class DigitalClassController extends Controller
             'topic' => 'required',
             'class_date' => 'required',
             'class_time' => 'required',
+            'price' => 'nullable|numeric|min:0',
         ]);
 
-        $create = LiveClass::where('id', $request->liveClassId)->update([
+        $updateData = [
             'subject_id' => $request->subject,
             'topic_id' => $request->topic,
             'date' => $request->class_date,
             'time' => $request->class_time,
-        ]);
+        ];
+
+        if ($request->has('price')) {
+            $updateData['price'] = $request->price;
+        }
+
+        LiveClass::where('id', $request->liveClassId)->update($updateData);
 
         return true;
     }
@@ -210,7 +237,24 @@ class DigitalClassController extends Controller
             $recordedVideos->where('subject_id', $request->subjectId);
         }
 
-        return $recordedVideos->orderBy('created_at', 'DESC')->paginate(30);
+        $result = $recordedVideos->orderBy('created_at', 'DESC')->paginate(30);
+
+        $purchasedIds = Transaction::where('user_id', Auth::id())
+            ->where('item_type', 'video')
+            ->where('status', 'completed')
+            ->pluck('item_id')
+            ->toArray();
+
+        $result->getCollection()->transform(function ($item) use ($purchasedIds) {
+            $hasAccess = ($item->price <= 0) || in_array($item->id, $purchasedIds);
+            $item->has_access = $hasAccess;
+            if (!$hasAccess) {
+                $item->video_link = null;
+            }
+            return $item;
+        });
+
+        return $result;
     }
 
     //  upload pre recorded videos
@@ -221,6 +265,7 @@ class DigitalClassController extends Controller
             'topic' => 'required',
             'title' => 'required',
             'description' => 'required',
+            'price' => 'nullable|numeric|min:0',
         ]);
 
         try {
@@ -236,7 +281,8 @@ class DigitalClassController extends Controller
                     'title' => $request->title,
                     'description' => $request->description,
                     'video_link' => $video->getVideoId(),
-                    'uploaded_by' => Auth::user()->id
+                    'uploaded_by' => Auth::user()->id,
+                    'price' => $request->price ?? 0,
                 ]);
 
                 return true;
@@ -256,6 +302,7 @@ class DigitalClassController extends Controller
             'topic' => 'required',
             'title' => 'required',
             'description' => 'required',
+            'price' => 'nullable|numeric|min:0',
         ]);
 
         try {
@@ -265,6 +312,10 @@ class DigitalClassController extends Controller
             $recorded_video->topic_id = $request->topic;
             $recorded_video->title = $request->title;
             $recorded_video->description = $request->description;
+
+            if ($request->has('price')) {
+                $recorded_video->price = $request->price;
+            }
 
             $video_id = $recorded_video->video_link;
 
@@ -339,13 +390,31 @@ class DigitalClassController extends Controller
             'google_meet_link' => Null
         ]);
     }
+    // join live class — gated access, redirects to meeting url
+    public function joinLiveClass($id)
+    {
+        $liveClass = LiveClass::findOrFail($id);
+
+        if ($liveClass->status !== 'ongoing') {
+            return redirect()->back()->with('error', 'Live class is not currently active');
+        }
+
+        return redirect($liveClass->meeting_url);
+    }
+
+    // watch recorded video — gated access, redirects to youtube
+    public function watchRecordedVideo($id)
+    {
+        $video = RecordedVideo::findOrFail($id);
+        return redirect('https://www.youtube.com/watch?v=' . $video->video_link);
+    }
+
     // function to change status after meeting expires
     public function updateElapsed(Request $request)
     {
-        $user_status = 3;
         $user_id = Auth::user()->id;
         $update = LiveClass::where(['created_by' => $user_id, 'meeting_url' => Auth::user()->google_meet_link])->update([
-            'status' => $user_status
+            'status' => 'expired'
         ]);
         return true;
     }

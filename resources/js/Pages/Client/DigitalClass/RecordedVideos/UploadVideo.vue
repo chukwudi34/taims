@@ -106,6 +106,22 @@
             <div class="mb-4">
               <div class="input-group">
                 <div class="input-group-prepend">
+                  <span class="input-group-text">Price (NGN)</span>
+                </div>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  v-model="form.price"
+                  class="form-control"
+                  placeholder="0 = Free"
+                />
+              </div>
+              <p class="text-muted small mt-1">Set 0 for free access</p>
+            </div>
+            <div class="mb-4">
+              <div class="input-group">
+                <div class="input-group-prepend">
                   <span class="input-group-text">Select Video</span>
                 </div>
                 <input
@@ -169,6 +185,7 @@ export default {
         title: "",
         description: "",
         videoFile: "",
+        price: "",
       },
       refreshKey: 0,
     };

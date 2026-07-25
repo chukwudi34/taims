@@ -69,6 +69,7 @@
                 <th width="10%">End time</th>
                 <th width="5%">Duration(Minutes)</th>
                 <th width="18%">Created by</th>
+                <th width="5%">Price</th>
                 <th width="5%">Status</th>
                 <th width="3%">Action</th>
               </tr>
@@ -85,6 +86,10 @@
                 <td>{{ lcs.end_time }}</td>
                 <td>{{ lcs.time_duration }}</td>
                 <td>{{ lcs.creator.lname }} {{ lcs.creator.fname }}</td>
+                <td>
+                  <span v-if="lcs.price > 0">NGN {{ lcs.price }}</span>
+                  <span v-else class="text-success">Free</span>
+                </td>
                 <td>
                   <span
                     :class="[
@@ -131,8 +136,8 @@
                       >
                         <span> Start Class </span>
                       </div>
-                      <div
-                        @click="OpenUrl(lcs.meeting_url)"
+                      <a
+                        :href="`/client/digital_class/live_class/join/${lcs.id}`"
                         class="dropdown-item"
                         style="cursor: pointer"
                         v-if="
@@ -141,7 +146,7 @@
                         "
                       >
                         <span> Join Class </span>
-                      </div>
+                      </a>
                       <!-- <div
                         @click="
                           $bvModal.show('edit-class');

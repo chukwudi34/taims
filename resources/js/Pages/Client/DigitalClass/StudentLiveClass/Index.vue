@@ -47,14 +47,14 @@
             <thead>
               <tr>
                 <th width="3%">#</th>
-                <th width="20%">Subject</th>
-                <th width="25%">Topic</th>
-                <th width="15%">Start Date</th>
-                <th width="10%">Start Time</th>
-                <!-- <th>Joined</th> -->
-                <th width="18%">Created by</th>
+                <th width="15%">Subject</th>
+                <th width="20%">Topic</th>
+                <th width="12%">Start Date</th>
+                <th width="8%">Start Time</th>
+                <th width="13%">Created by</th>
+                <th width="8%">Price</th>
                 <th>Status</th>
-                <th width="3%">Action</th>
+                <th width="10%">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -65,53 +65,64 @@
                 </td>
                 <td>{{ lcs.topic && lcs.topic.topic_name }}</td>
                 <td>{{ lcs.date }}</td>
-                <td>{{ lcs.time }}</td>
-                <!-- <td>0</td> -->
+                <td>{{ lcs.start_time }}</td>
                 <td>{{ lcs.creator.lname }} {{ lcs.creator.fname }}</td>
                 <td>
+                  <span v-if="lcs.price > 0" class="text-primary font-weight-bold">NGN {{ lcs.price }}</span>
+                  <span v-else class="text-success">Free</span>
+                </td>
+                <td>
                   <div
-                    class="badge badge-pill badge-success badge-success"
+                    class="badge badge-pill"
                     :class="{
-                      'badge-success': lcs.status == '1',
-                      'badge-danger': lcs.status == '3',
-                      'badge-info': lcs.status == '2',
+                      'badge-success': lcs.status == 'ongoing',
+                      'badge-danger': lcs.status == 'expired',
+                      'badge-info': lcs.status == 'not_started',
                     }"
                   >
-                    <span v-if="lcs.status == ('1' && lcs.meeting_url != lcs.meeting_url =='')"> ONGOING</span>
-                    <span v-if="lcs.status == '2'"> SCHEDULED</span>
-                    <span v-if="lcs.status == '3'"> ELASPED</span>
+                    <span v-if="lcs.status == 'ongoing'">ONGOING</span>
+                    <span v-if="lcs.status == 'not_started'">SCHEDULED</span>
+                    <span v-if="lcs.status == 'expired'">ELAPSED</span>
                   </div>
                 </td>
                 <td>
-                  <div class="dropdown">
+                  <template v-if="lcs.status == 'not_started'">
                     <button
-                      type="button"
-                      class="btn dropdown-toggle p-0 action"
-                      data-toggle="dropdown"
+                      v-if="lcs.has_access || lcs.price <= 0"
+                      class="btn btn-secondary btn-sm"
+                      disabled
                     >
-                      <i class="fas fa-cog"></i>
+                      Enrolled
                     </button>
-                    <div class="dropdown-menu dropdown-menu-right">
-                      <div
-                        @click="
-                          $bvModal.show('edit-class');
-                          setCurrentClass(lcs);
-                        "
-                        class="dropdown-item"
-                        style="cursor: pointer"
-                      >
-                        Edit Class
-                      </div>
-                      <div
-                        @click="OpenUrl(lcs.meeting_url)"
-                          v-if="lcs.status == '1'"
-                        class="dropdown-item"
-                        style="cursor: pointer"
-                      >
-                        Join Class
-                      </div>
-                    </div>
-                  </div>
+                    <button
+                      v-else
+                      @click="payForItem('live_class', lcs.id)"
+                      class="btn btn-primary btn-sm"
+                      :disabled="paying"
+                    >
+                      <i class="fas fa-spinner fa-spin" v-if="paying"></i>
+                      Pay NGN {{ lcs.price }}
+                    </button>
+                  </template>
+                  <template v-else-if="lcs.status == 'ongoing'">
+                    <a
+                      v-if="lcs.has_access"
+                      :href="`/client/digital_class/live_class/join/${lcs.id}`"
+                      class="btn btn-success btn-sm"
+                    >
+                      Join Class
+                    </a>
+                    <button
+                      v-else
+                      @click="payForItem('live_class', lcs.id)"
+                      class="btn btn-primary btn-sm"
+                      :disabled="paying"
+                    >
+                      <i class="fas fa-spinner fa-spin" v-if="paying"></i>
+                      Pay NGN {{ lcs.price }}
+                    </button>
+                  </template>
+                  <span v-else class="text-muted small">--</span>
                 </td>
               </tr>
             </tbody>
@@ -130,39 +141,16 @@
             </pagination>
         </div>
       </div>
-
-      <!-- Create Subject Modal  -->
-      <!-- <b-modal id="create-class" hide-footer title="Schedule Live Class">
-        <CreateLiveClassVue
-          :my_modal="this.$bvModal"
-          @class-created="fetchLiveClassData"
-        />
-      </b-modal> -->
-
-      <!-- Edit Subject Modal  -->
-      <!-- <b-modal id="edit-class" hide-footer title="Edit Live Class">
-        <EditLiveClassVue
-          :my_modal="this.$bvModal"
-          :currentClass="currentClass"
-          @class-updated="fetchLiveClassData"
-        /> -->
-      <!-- </b-modal> -->
     </div>
   </template>
 
-
   <script>
   import VueElementLoading from "vue-element-loading";
-  import swal from "sweetalert";
   import axios from "axios";
-//   import CreateLiveClassVue from "./CreateLiveClass.vue";
-//   import EditLiveClassVue from "./EditLiveClass.vue";
 
   export default {
     components: {
       VueElementLoading,
-    //   CreateLiveClassVue,
-    //   EditLiveClassVue
     },
     data() {
       return {
@@ -173,10 +161,10 @@
         filter: {
           subjectId: "",
         },
+        paying: false,
       };
     },
     methods: {
-      // get all Liveclass record
       fetchLiveClassData(page = 1) {
         this.liveClassLoading = true;
         axios
@@ -184,15 +172,12 @@
           .then((res) => {
             this.liveclasses = res.data;
           })
-          .catch((err) => {
-            //   swal("Error", "Unable to fetch Subjects", "error");
-          })
+          .catch((err) => {})
           .finally(() => {
             this.liveClassLoading = false;
           });
       },
 
-      //  method to fetch all subjects to be displayed
       getAllSubjects() {
         this.liveClassLoading = true;
         axios
@@ -200,62 +185,54 @@
           .then((res) => {
             this.subjects = res.data;
           })
-          .catch((err) => {
-            //   swal("Error", "Unable to fetch Subjects", "error");
-          })
+          .catch((err) => {})
           .finally(() => {
             this.liveClassLoading = false;
           });
       },
 
-      OpenUrl(meeting_url) {
-            window.open(meeting_url, 'popup', 'width=600,height=600');
-            // this.meeting_url_close = meeting_url,
-            localStorage.setItem("link", JSON.stringify({
-                url: meeting_url
-            }))
-            setTimeout(this.trackClick.bind(this), 60 * 1000); // Call the trackClick function after 60 seconds
-            // window.open(this.$page.props.auth.user.google_meet_link,'popup','width=600,height=600'); return false;
-        },
-        trackClick() {
-            // let currentTime = Date.now();
-            let a = JSON.parse(localStorage.getItem('link'));
-            if(a.url === this.$page.props.auth.user.google_meet_link){
-                window.close(a.url);
+      payForItem(itemType, itemId) {
+        this.paying = true;
+        axios
+          .post("/payment/checkout", { item_type: itemType, item_id: itemId })
+          .then((res) => {
+            if (res.data.free) {
+              this.$toast.success("Access granted");
+              this.fetchLiveClassData();
+              return;
             }
-                // console.log(a.url);
-                // popup.close();
-                // popup.location.href === 'https://www.example.com';
+            if (window.PaystackPop) {
+              const handler = PaystackPop.setup({
+                key: res.data.public_key,
+                email: res.data.email,
+                amount: res.data.amount,
+                ref: res.data.reference,
+                callback: () => {
+                  this.$toast.success("Payment successful! Access granted.");
+                  this.fetchLiveClassData();
+                },
+                onClose: () => {
+                  this.$toast.info("Payment cancelled");
+                },
+              });
+              handler.openIframe();
+            }
+          })
+          .catch((err) => {
+            this.$toast.error(err.response?.data?.error || "Payment failed");
+          })
+          .finally(() => {
+            this.paying = false;
+          });
+      },
 
-
-            // if (currentTime - this.lastClickTime > (60 * 1000)) { // Check if it has been an hour since the last click
-            //      let a = JSON.parse(localStorage.getItem('link'));
-            //     console.log(a);
-            //     // eventBus.$emit('disable-description');
-            //     // window.close(this.OpenUrl(this.meeting_url_close),'popup','width=600,height=600');
-            //     // alert(123);
-            //     // localStorage.setItem("link",{
-            //     //     url:
-            //     // })
-            //     this.lastClickTime = currentTime; // Update last click time
-            // } else {
-            //     console.log("Function clicked within an hour of previous click");
-            // }
-        },
-        UpdateStatusForElapsed() {
+      UpdateStatusForElapsed() {
             axios
                 .post("/client/digital_class/live_class/update_elapsed")
-                .then((res) => {
-                    //   this.liveclasses = res.data;
-                })
-                .catch((err) => {
-                    // swal("Error", "Unable to fetch u", "error");
-                })
-                .finally(() => {
-                    //   this.liveClassLoading = false;
-                });
+                .then((res) => {})
+                .catch((err) => {})
+                .finally(() => {});
         },
-      //  method to store the current selected subject for edit
       setCurrentClass(data) {
         this.currentClass = data;
       },

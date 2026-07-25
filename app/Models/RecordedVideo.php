@@ -10,6 +10,11 @@ class RecordedVideo extends Model
     use HasFactory;
 
     protected $guarded = [];
+
+    protected $casts = [
+        'price' => 'float',
+    ];
+
     protected $with = ['subject', 'topic', 'creator'];
 
     public function subject()

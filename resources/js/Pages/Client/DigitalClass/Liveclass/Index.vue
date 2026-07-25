@@ -23,8 +23,11 @@
                 </div>
               </div>
             </div>
-            <div class="col-12">
+            <div class="col-12" v-if="$page.props.auth.user.user_type_id != 2">
               <LiveClassVue />
+            </div>
+            <div class="col-12" v-if="$page.props.auth.user.user_type_id == 2">
+              <StudentLive />
             </div>
           </div>
         </div>

@@ -12,6 +12,10 @@ class Quiz extends Model
     use HasFactory;
     protected $guarded = [];
 
+    protected $casts = [
+        'price' => 'float',
+    ];
+
     public function quiz_category(): BelongsTo
     {
         return $this->belongsTo(QuizCategory::class,'category_id','id');

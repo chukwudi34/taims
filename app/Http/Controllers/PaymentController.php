@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LiveClass;
 use App\Models\Pricing;
+use App\Models\RecordedVideo;
+use App\Models\Quiz;
 use App\Models\Transaction;
 use App\Services\PaystackService;
 use Illuminate\Http\Request;
@@ -23,17 +26,28 @@ class PaymentController extends Controller
             'item_id' => 'required|integer',
         ]);
 
-        $pricing = Pricing::where('item_type', $request->item_type)
-            ->where('item_id', $request->item_id)
-            ->where('is_active', true)
-            ->firstOrFail();
+        $item = match ($request->item_type) {
+            'live_class' => LiveClass::findOrFail($request->item_id),
+            'video' => RecordedVideo::findOrFail($request->item_id),
+            'quiz' => Quiz::findOrFail($request->item_id),
+            default => null,
+        };
+
+        $amount = $item ? $item->price : 0;
+
+        if ($amount <= 0) {
+            return response()->json([
+                'free' => true,
+                'message' => 'Item is free — access granted',
+            ]);
+        }
 
         $reference = 'TXN-' . strtoupper(uniqid());
 
         $transaction = Transaction::create([
             'reference' => $reference,
             'user_id' => auth()->id(),
-            'amount' => $pricing->amount,
+            'amount' => $amount,
             'currency' => 'NGN',
             'status' => 'pending',
             'item_type' => $request->item_type,
@@ -47,7 +61,7 @@ class PaymentController extends Controller
 
         $paystackResponse = $this->paystack->initializeTransaction([
             'email' => auth()->user()->email,
-            'amount' => $pricing->amount * 100,
+            'amount' => $amount * 100,
             'reference' => $reference,
             'currency' => 'NGN',
             'callback_url' => route('payment.callback'),
@@ -69,6 +83,9 @@ class PaymentController extends Controller
         return response()->json([
             'authorization_url' => $paystackResponse['data']['authorization_url'],
             'reference' => $reference,
+            'public_key' => config('services.paystack.public_key'),
+            'email' => auth()->user()->email,
+            'amount' => $amount * 100,
         ]);
     }
 
@@ -76,10 +93,16 @@ class PaymentController extends Controller
     {
         $reference = $request->reference;
 
-        $transaction = Transaction::where('reference', $reference)->firstOrFail();
+        $transaction = Transaction::where('reference', $reference)->first();
+
+        if (!$transaction) {
+            return response('<html><body><script>window.close();</script><p>Transaction not found. You may close this tab.</p></body></html>')
+                ->header('Content-Type', 'text/html');
+        }
 
         if ($transaction->status === 'completed') {
-            return redirect('/purchases')->with('success', 'Payment already completed');
+            return response('<html><body><script>window.close();</script><p>Payment already completed. You may close this tab.</p></body></html>')
+                ->header('Content-Type', 'text/html');
         }
 
         $verification = $this->paystack->verifyTransaction($reference);
@@ -91,16 +114,15 @@ class PaymentController extends Controller
                 'status' => 'completed',
                 'paid_at' => now(),
             ]);
-
-            return redirect('/purchases')->with('success', 'Payment successful! Access granted.');
+        } else {
+            $transaction->update([
+                'status' => 'failed',
+                'failure_reason' => $verification['data']['gateway_response'] ?? 'Payment verification failed',
+            ]);
         }
 
-        $transaction->update([
-            'status' => 'failed',
-            'failure_reason' => $verification['data']['gateway_response'] ?? 'Payment verification failed',
-        ]);
-
-        return redirect('/purchases')->with('error', 'Payment verification failed. Please try again.');
+        return response('<html><body><script>window.close();</script><p>Payment processed. You may close this tab.</p></body></html>')
+            ->header('Content-Type', 'text/html');
     }
 
     public function webhook(Request $request)

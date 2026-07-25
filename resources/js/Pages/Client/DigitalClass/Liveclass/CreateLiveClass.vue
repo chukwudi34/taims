@@ -128,6 +128,22 @@
               </span>
             </div>
           </div>
+          <div class="col-md-12 mb-3">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text">Price (NGN)</span>
+              </div>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                v-model="form.price"
+                class="form-control"
+                placeholder="0 = Free"
+              />
+            </div>
+            <p class="text-muted small mt-1">Set 0 for free access</p>
+          </div>
         </div>
       </div>
       <div class="d-block text-right card-footer">
@@ -172,6 +188,7 @@ export default {
         end_time: "",
         start_time: "",
         class: "",
+        price: "",
       },
       lastClickTime: 0,
     };

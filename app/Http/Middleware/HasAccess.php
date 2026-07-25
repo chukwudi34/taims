@@ -2,6 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\LiveClass;
+use App\Models\RecordedVideo;
+use App\Models\Quiz;
 use App\Models\Transaction;
 use Closure;
 
@@ -11,9 +14,21 @@ class HasAccess
     {
         $itemId = $request->route()->parameter('id')
             ?? $request->route()->parameter($itemType . '_id')
+            ?? $request->route()->parameter('quiz_id')
             ?? $request->input('id');
 
         if (!$itemId) {
+            return $next($request);
+        }
+
+        $item = match ($itemType) {
+            'live_class' => LiveClass::find($itemId),
+            'video' => RecordedVideo::find($itemId),
+            'quiz' => Quiz::find($itemId),
+            default => null,
+        };
+
+        if ($item && $item->price <= 0) {
             return $next($request);
         }
 

@@ -61,13 +61,14 @@
           <thead>
             <tr>
               <th width="3%">#</th>
-              <th width="20%">Subject</th>
-              <th width="25%">Topic</th>
-              <th width="8%">Video Link</th>
-              <th width="18%">Uploaded by</th>
-              <th width="20%">Date Uploaded</th>
+              <th width="15%">Subject</th>
+              <th width="20%">Topic</th>
+              <th width="8%">Video</th>
+              <th width="13%">Uploaded by</th>
+              <th width="15%">Date Uploaded</th>
+              <th width="8%">Price</th>
               <th>Status</th>
-              <th width="3%">Action</th>
+              <th width="10%">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -81,13 +82,18 @@
                 <a
                   style="text-decoration: underline"
                   target="tabs"
-                  :href="`https://www.youtube.com/watch?v=${video.video_link}`"
-                  >https://www.youtube.com/watch?v={{ video.video_link }}</a
-                >
+                  :href="$page.props.auth.user.user_type_id == 2 ? `/client/digital_class/recorded_videos/watch/${video.id}` : `https://www.youtube.com/watch?v=${video.video_link}`"
+                  v-if="video.has_access || $page.props.auth.user.user_type_id != 2"
+                >Watch</a>
+                <span v-else class="text-muted">Restricted</span>
               </td>
               <td>{{ video.creator.lname }} {{ video.creator.fname }}</td>
               <td>
                 {{ video.created_at | moment("ddd Do MMM, YYYY, hh:mm a") }}
+              </td>
+              <td>
+                <span v-if="video.price > 0" class="text-primary font-weight-bold">NGN {{ video.price }}</span>
+                <span v-else class="text-success">Free</span>
               </td>
               <td>
                 <div
@@ -102,7 +108,8 @@
                 </div>
               </td>
               <td>
-                <div class="dropdown">
+                <!-- Teacher/Admin actions -->
+                <div class="dropdown" v-if="$page.props.auth.user.user_type_id != 2">
                   <button
                     type="button"
                     class="btn dropdown-toggle p-0 action"
@@ -146,6 +153,17 @@
                     </div>
                   </div>
                 </div>
+                <!-- Student actions -->
+                <button
+                  v-else-if="video.price > 0 && !video.has_access"
+                  @click="payForItem('video', video.id)"
+                  class="btn btn-primary btn-sm"
+                  :disabled="paying"
+                >
+                  <i class="fas fa-spinner fa-spin" v-if="paying"></i>
+                  Pay NGN {{ video.price }}
+                </button>
+                <span v-else-if="$page.props.auth.user.user_type_id == 2" class="text-success small">Access granted</span>
               </td>
             </tr>
           </tbody>
@@ -184,7 +202,6 @@
   </div>
 </template>
 
-
 <script>
 import VueElementLoading from "vue-element-loading";
 import swal from "sweetalert";
@@ -207,6 +224,7 @@ export default {
       filter: {
         subjectId: "",
       },
+      paying: false,
     };
   },
   methods: {
@@ -247,13 +265,39 @@ export default {
         });
     },
 
-    OpenUrl() {
-      window.open(
-        this.$page.props.auth.user.google_meet_link,
-        "popup",
-        "width=600,height=600"
-      );
-      return false;
+    payForItem(itemType, itemId) {
+      this.paying = true;
+      axios
+        .post("/payment/checkout", { item_type: itemType, item_id: itemId })
+        .then((res) => {
+          if (res.data.free) {
+            this.$toast.success("Access granted");
+            this.fetchRecordedVideos();
+            return;
+          }
+          if (window.PaystackPop) {
+            const handler = PaystackPop.setup({
+              key: res.data.public_key,
+              email: res.data.email,
+              amount: res.data.amount,
+              ref: res.data.reference,
+              callback: () => {
+                this.$toast.success("Payment successful! Access granted.");
+                this.fetchRecordedVideos();
+              },
+              onClose: () => {
+                this.$toast.info("Payment cancelled");
+              },
+            });
+            handler.openIframe();
+          }
+        })
+        .catch((err) => {
+          this.$toast.error(err.response?.data?.error || "Payment failed");
+        })
+        .finally(() => {
+          this.paying = false;
+        });
     },
 
     //  method to store the current selected subject for edit
