@@ -48,10 +48,17 @@ export default {
           item_id: this.itemId,
         })
         .then((res) => {
+          if (res.data.already_completed) {
+            this.$toast.success("Access granted");
+            this.$emit('close');
+            return;
+          }
           window.location.href = res.data.authorization_url;
         })
         .catch((err) => {
           this.$toast.error(err.response?.data?.error || "Payment failed");
+        })
+        .finally(() => {
           this.loading = false;
         });
     },

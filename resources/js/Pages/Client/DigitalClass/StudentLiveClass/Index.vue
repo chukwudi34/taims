@@ -196,23 +196,35 @@
         axios
           .post("/payment/checkout", { item_type: itemType, item_id: itemId })
           .then((res) => {
-            if (res.data.free) {
+            if (res.data.free || res.data.already_completed) {
               this.$toast.success("Access granted");
               this.fetchLiveClassData();
+              this.paying = false;
               return;
             }
             if (window.PaystackPop) {
+              const reference = res.data.reference;
               const handler = PaystackPop.setup({
                 key: res.data.public_key,
                 email: res.data.email,
                 amount: res.data.amount,
-                ref: res.data.reference,
+                ref: reference,
                 callback: () => {
-                  this.$toast.success("Payment successful! Access granted.");
-                  this.fetchLiveClassData();
+                  axios.get('/payment/callback', { params: { reference } })
+                    .then(() => {
+                      this.$toast.success("Payment successful! Access granted.");
+                      this.fetchLiveClassData();
+                    })
+                    .catch(() => {
+                      this.$toast.error("Payment verification failed. Contact support.");
+                    })
+                    .finally(() => {
+                      this.paying = false;
+                    });
                 },
                 onClose: () => {
                   this.$toast.info("Payment cancelled");
+                  this.paying = false;
                 },
               });
               handler.openIframe();
@@ -220,8 +232,6 @@
           })
           .catch((err) => {
             this.$toast.error(err.response?.data?.error || "Payment failed");
-          })
-          .finally(() => {
             this.paying = false;
           });
       },
