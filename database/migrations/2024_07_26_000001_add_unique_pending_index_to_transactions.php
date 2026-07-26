@@ -1,8 +1,6 @@
 <?php
 
-use App\Models\Transaction;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -27,11 +25,15 @@ return new class extends Migration
                 ->delete();
         }
 
-        DB::statement('CREATE UNIQUE INDEX transactions_pending_unique ON transactions(user_id, item_type, item_id) WHERE status = \'pending\'');
+        Schema::table('transactions', function ($table) {
+            $table->index(['user_id', 'item_type', 'item_id', 'status'], 'idx_transactions_lookup');
+        });
     }
 
     public function down()
     {
-        DB::statement('DROP INDEX IF EXISTS transactions_pending_unique ON transactions');
+        Schema::table('transactions', function ($table) {
+            $table->dropIndex('idx_transactions_lookup');
+        });
     }
 };
