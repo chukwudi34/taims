@@ -40,7 +40,7 @@ import { navItems } from "../../shared/sidebarNav";
 export default {
   computed: {
     visibleNavItems() {
-      const userTypeId = this.$page.props.auth?.user?.user_type_id;
+      const userTypeId = Number(this.$page.props.auth?.user?.user_type_id);
       return navItems.filter(
         (item) => !item.roles || item.roles.includes(userTypeId)
       );
