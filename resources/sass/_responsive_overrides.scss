@@ -4,9 +4,9 @@
   }
 }
 
-/* Sidebar scrollable — force override of template CSS */
-/* Need high specificity to beat perfect-scrollbar's .ps-container { overflow: hidden !important } */
-.sidebar.ps-container {
+/* Sidebar scrollable — native scrolling */
+/* Removed vertical-scroll class to prevent perfect-scrollbar JS from setting inline overflow:hidden */
+.sidebar {
   position: fixed !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
@@ -21,7 +21,7 @@
 }
 
 /* b-sidebar mobile nav */
-.b-sidebar .sidebar.ps-container {
+.b-sidebar .sidebar {
   height: 100% !important;
   overflow-y: auto !important;
 }

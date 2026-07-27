@@ -63,7 +63,7 @@
     >
       <template>
         <nav
-          class="sidebar vertical-scroll ps-container ps-theme-default ps-active-y"
+          class="sidebar"
         >
           <div class="logo d-flex justify-content-between">
             <inertia-link href="/">

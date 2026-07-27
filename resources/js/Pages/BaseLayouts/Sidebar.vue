@@ -1,7 +1,7 @@
 <template>
   <div>
     <nav
-      class="sidebar vertical-scroll d-none d-md-block ps-container ps-theme-default ps-active-y"
+      class="sidebar d-none d-md-block"
     >
       <div class="logo d-flex justify-content-between">
         <inertia-link href="/">
